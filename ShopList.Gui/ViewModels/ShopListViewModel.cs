@@ -2,62 +2,44 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
+
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
-//using Java.Beans;
+
+
 using ShopList.Gui.Models;
 
 namespace ShopList.Gui.ViewModels
 {
-    public class ShopListViewModel:INotifyPropertyChanged
+    public partial class ShopListViewModel:ObservableObject
     {
+        [ObservableProperty]
+
         private string _nombreDelArticulo = "Mantequilla";
+        [ObservableProperty]
         private int _cantidadAComprar = 1;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string NombreDelArticulo
-        {
-            get =>_nombreDelArticulo;
-            set
-            {
-                if(_nombreDelArticulo != value)
-                {
-                    _nombreDelArticulo = value;
-                    OnPropertyChanged(nameof(NombreDelArticulo));
-                }
-            }
-        }
-        public int CantidadAComprar
-        {
-            get => _cantidadAComprar;
-            set
-            {
-                if (_cantidadAComprar != value)
-                {
-                    _cantidadAComprar = value;
-                    OnPropertyChanged(nameof(CantidadAComprar));
-                }
-            }
-        }
+     
         
         public ObservableCollection<Item> Items { get; }
 
-        public ICommand AgregarShopListItemCommand { get; private set; }
+       
 
         public ShopListViewModel()
         {
             Items = new ObservableCollection<Item>();
             CargarDatos();
-            AgregarShopListItemCommand =new Command(AgregarShopListItem);
+           
         }
+        [RelayCommand]
         public void AgregarShopListItem()
         {
-            if (string.IsNullOrEmpty(NombreDelArticulo)|| CantidadAComprar<=0)
+            if (string.IsNullOrEmpty(NombreDelArticulo) || CantidadAComprar<=0)
             {
                 return;
             }
@@ -67,6 +49,7 @@ namespace ShopList.Gui.ViewModels
             NombreDelArticulo = string.Empty;
             CantidadAComprar = 1;
         }
+        [RelayCommand]
         public void eliminarShopListItem()
         {
 
@@ -102,12 +85,7 @@ namespace ShopList.Gui.ViewModels
             });
 
         }
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-           
-        }
+        
 
     }
 }
