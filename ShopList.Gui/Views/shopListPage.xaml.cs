@@ -9,4 +9,6 @@ public partial class shopListPage : ContentPage
 		InitializeComponent();
 		BindingContext = new ShopListViewModel();
 	}
+
+  
 }

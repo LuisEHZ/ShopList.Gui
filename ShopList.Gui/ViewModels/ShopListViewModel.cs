@@ -9,49 +9,57 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ShopList.Gui.Models;
+using ShopList.Gui.Persistence;
+
 
 namespace ShopList.Gui.ViewModels
 {
     public partial class ShopListViewModel:ObservableObject
     {
+        
+
 
         [ObservableProperty]
         private Item? itemSeleccionado = null;
 
         [ObservableProperty]
-        private string _nombreDelArticulo = "Mantequilla";
+        private string _nombreDelArticulo = string.Empty;
         [ObservableProperty]
         private int _cantidadAComprar = 1;
 
 
 
-     
-        
-        public ObservableCollection<Item> Items { get; }
 
+        [ObservableProperty]
+        private ObservableCollection<Item>? items = null;
+        private ShopListDatabase? _database =null ;
+       
        
 
         public ShopListViewModel()
         {
+           _database = new ShopListDatabase();
             Items = new ObservableCollection<Item>();
-          
-            CargarDatos();
+          GetItems();
+            //CargarDatos();
            
         }
 
         [RelayCommand]
 
-        public void AgregarShopListItem()
+        public async void AgregarShopListItem()
         {
             if (string.IsNullOrEmpty(NombreDelArticulo) || CantidadAComprar<=0)
             {
                 return;
             }
-            Random generador = new Random();
+            //    Random generador = new Random();
 
-            var item = new Item { Id =generador.Next(), Nombre = NombreDelArticulo, Cantidad = CantidadAComprar, Comprado = false };
+                 var item = new Item {// Id =generador.Next(), 
+                     Nombre = NombreDelArticulo, Cantidad = CantidadAComprar, Comprado = false };
 
-            Items.Add(item);
+            // Items.Add(item);
+           
             NombreDelArticulo = string.Empty;
             CantidadAComprar = 1;
         }
@@ -88,37 +96,47 @@ namespace ShopList.Gui.ViewModels
             ItemSeleccionado = nuevoSeleccionado;
         }
 
-
-
-        private void CargarDatos()
+        private async void GetItems()
         {
+            IEnumerable<Item> ItemFromDB = await _database.GetAllItemAsync();
+            Items = new ObservableCollection<Item>(ItemFromDB);
 
-            Items.Add(new Item()
-            {
-                Id = 1,
-                Nombre = "Leche",
-                Cantidad = 2,
-                Comprado=false
-
-            });
-
-            Items.Add(new Item()
-            {
-                Id = 2,
-                Nombre = "Pan de caja",
-                Cantidad = 1,
-                 Comprado = true
-            });
-
-            Items.Add(new Item()
-            {
-                Id = 3,
-                Nombre = "Jamón",
-                Cantidad = 500,
-                 Comprado = false
-            });
-
+            
+            //foreach (var item in items)
+            //    Items.Add(item);
         }
+
+
+
+        //private void CargarDatos()
+        //{
+
+        //    Items.Add(new Item()
+        //    {
+        //        Id = 1,
+        //        Nombre = "Leche",
+        //        Cantidad = 2,
+        //        Comprado=false
+
+        //    });
+
+        //    Items.Add(new Item()
+        //    {
+        //        Id = 2,
+        //        Nombre = "Pan de caja",
+        //        Cantidad = 1,
+        //         Comprado = true
+        //    });
+
+        //    Items.Add(new Item()
+        //    {
+        //        Id = 3,
+        //        Nombre = "Jamón",
+        //        Cantidad = 500,
+        //         Comprado = false
+        //    });
+
+        //}
         
 
     }
